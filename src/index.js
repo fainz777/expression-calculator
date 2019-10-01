@@ -86,7 +86,7 @@ function isOperator(sign) {
 }
 
 function isGreterOperator(oldOperator, newOperator) {
-	debugger;
+	//debugger;
 	return operatorsPriority[newOperator] < operatorsPriority[oldOperator];
 }
 
@@ -114,7 +114,9 @@ function isBracketsPaired(expr) {
 function getBracketsExpression(expr) {
 	//const bracketsPattern = /console.log(openBrackets.length, closedBrackets.length, expr)/;
 	//const bracketsPattern = /\(((\d+\.?\d*)(\+|-|\*|\/)\d(\d+\.?\d*)*)+\)/;
-	const bracketsPattern = /\(((\d+\.?\d*)(\+|-|\*|\/)\d(\d+\.?\d*)*(\+|-|\*|\/)*)+\)/;
+	//const bracketsPattern = /\((-)?((\d+\.?\d*)(\+|-|\*|\/)\d(\d+\.?\d*)*(\+|-|\*|\/)*)+\)/;
+	//const bracketsPattern = /\((-)?((\d+\.?\d*)(\+|-|\*|\/)(-)?\d(\d+\.?\d*)*(\+|-|\*|\/)*)+\)/;
+	const bracketsPattern = /\((-)?((\d+\.?\d*)(\+|-|\*|\/)(-)?\d+(\.?\d*)*(\+|-|\*|\/)*)+\)/;
 	return expr.match(bracketsPattern);
 }
 
@@ -131,6 +133,7 @@ function expressionCalculator(expr) {
 	if (!isBracketsPaired(expr)) {
 		// ToDo
 		 //throw new ExpressionError('ExpressionError: Brackets must be paired');
+		 console.log(expr);
 		throw new Error('ExpressionError: Brackets must be paired');
 	}
 
@@ -143,6 +146,7 @@ function expressionCalculator(expr) {
 
 	while(bracketsExpr) {
 		//console.log('bracketsExpr while: ', bracketsExpr);
+		debugger;
 		let result = expressionCalculator(bracketsExpr[0].slice(1, bracketsExpr[0].length - 1));
 		expr = expr.replace(bracketsExpr[0], result);
 		bracketsExpr = getBracketsExpression(expr);
@@ -154,9 +158,16 @@ function expressionCalculator(expr) {
 		debugger;
 
 		//console.log('replacer: ', replacer)
-		if (i === 0 && sign === '-') {
-			a += sign;
-			continue;
+		if (sign === '-') {
+			if(i === 0) {
+				a += sign;
+				continue;
+			}
+			
+			if (operator && !b) {
+				b += sign;
+				continue;
+			}
 		}
 
 		if (isDigit(sign)) {
@@ -213,6 +224,8 @@ function expressionCalculator(expr) {
 //const expr3 = " 49 * 63 / 58 * 3"
 //const expr4 = " 84 + 62 / 33 * 10 + 15 ";
 //const expr5 = " 16 + 25 - 92 + 54 / 66 ";
+//const expr6 = " 11 - 92 + 48 / (  (  12 / 92 + (  53 / 74 / 22 + (  61 / 24 / 42 - (  13 * 85 + 100 / 77 / 11  ) + 89  ) + 9  ) + 87  ) / 91 * 92  ) ";
+
 //const expr2 = " 59 - 13 + (  25 * 22 / (  47 / 38 * (  64 / 93 - 91 + 72  ) * 66  ) + 43 - 5  ) * 39 / 55 "
 //console.log('3 = ', expressionCalculator(expr))
 //console.log('117.78787878787878 = ', expressionCalculator(expr2))
@@ -220,6 +233,7 @@ function expressionCalculator(expr) {
 //console.log('72.6846 = ', expressionCalculator(expr3))
 //console.log('117.7879 = ', expressionCalculator(expr4))
 //console.log('-50.1818 = ', expressionCalculator(expr5))
+//console.log('-81.0516 = ', expressionCalculator(expr6))
 
 module.exports = {
     expressionCalculator
